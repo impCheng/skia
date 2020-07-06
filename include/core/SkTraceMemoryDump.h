@@ -9,6 +9,7 @@
 #define SkTraceMemoryDump_DEFINED
 
 #include "include/core/SkTypes.h"
+#include "include/core/SkString.h"
 
 class SkDiscardableMemory;
 
@@ -86,5 +87,44 @@ public:
 protected:
     virtual ~SkTraceMemoryDump() { }
 };
+
+class TestSkTraceMemoryDump : public SkTraceMemoryDump {
+public:
+    TestSkTraceMemoryDump(bool shouldDumpWrappedObjects)
+            : fShouldDumpWrappedObjects(shouldDumpWrappedObjects) {}
+    ~TestSkTraceMemoryDump() override { }
+
+    void dumpNumericValue(const char* dumpName, const char* valueName, const char* units,
+                          uint64_t value) override {
+        ++fNumDumpedObjects;
+        fDumpedObjectsSize += value;
+        printf("memory dump print dumpNumericValue %s, %s, %s, %llu , %zu \n",dumpName, valueName, units, value, fDumpedObjectsSize);
+    }
+    void dumpStringValue(const char* dumpName, const char* valueName, const char* value) override {
+        //printf("memory dump print dumpStringValue %s, %s, %s \n",dumpName, valueName, value);
+    }
+    void setMemoryBacking(const char* dumpName, const char* backingType,
+                          const char* backingObjectId) override {
+        //printf("memory dump print setMemoryBacking \n");
+    }
+    void setDiscardableMemoryBacking(
+        const char* dumpName,
+        const SkDiscardableMemory& discardableMemoryObject) override {
+        //printf("memory dump print setDiscardableMemoryBacking \n");
+    }
+    LevelOfDetail getRequestedDetails() const override {
+        return SkTraceMemoryDump::kObjectsBreakdowns_LevelOfDetail;
+    }
+    bool shouldDumpWrappedObjects() const override { return fShouldDumpWrappedObjects; }
+
+    size_t numDumpedObjects() const { return fNumDumpedObjects; }
+    size_t dumpedObjectsSize() const { return fDumpedObjectsSize; }
+
+private:
+    bool fShouldDumpWrappedObjects;
+    size_t fNumDumpedObjects = 0;
+    size_t fDumpedObjectsSize = 0;
+};
+
 
 #endif

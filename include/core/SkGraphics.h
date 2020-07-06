@@ -13,6 +13,8 @@
 class SkData;
 class SkImageGenerator;
 class SkTraceMemoryDump;
+class TestSkTraceMemoryDump;
+
 
 class SK_API SkGraphics {
 public:
