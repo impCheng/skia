@@ -662,17 +662,17 @@ sk_sp<const GrGLInterface> GrGLMakeNativeInterface() {
         
         if (strcmp("glReadPixels", name) == 0)
         {
-            fReadPixels_original = (F_ReadPixels_original) dlsym(fLoader.handle(), name);
+            fReadPixels_original = (F_ReadPixels_original) dlsym(ctx ? ctx : RTLD_DEFAULT, name);
             return (GrGLFuncPtr) &glReadPixels_hooker;
         }
         else if (strcmp("glFinish", name) == 0)
         {
-            fFinish_original = (F_Finish_original) dlsym(fLoader.handle(), name);
+            fFinish_original = (F_Finish_original) dlsym(ctx ? ctx : RTLD_DEFAULT, name);
             return (GrGLFuncPtr) &glFinish_hooker;
         }
         else if (strcmp("glFlush", name) == 0)
         {
-            fFlush_original = (F_Flush_original) dlsym(fLoader.handle(), name);
+            fFlush_original = (F_Flush_original) dlsym(ctx ? ctx : RTLD_DEFAULT, name);
             return (GrGLFuncPtr) &glFlush_hooker;
         }
 
@@ -680,42 +680,42 @@ sk_sp<const GrGLInterface> GrGLMakeNativeInterface() {
         {
             if (strcmp("glGenTextures",name) == 0)
             {
-                fGenTextures_original = (F_GenTextures_original) dlsym(fLoader.handle(), name);
+                fGenTextures_original = (F_GenTextures_original) dlsym(ctx ? ctx : RTLD_DEFAULT, name);
                 return (GrGLFuncPtr) &glGenTextures_hooker;
             }
             else if (strcmp("glTexImage2D", name) == 0)
             {
-                fTexImage2D_original = (F_TexImage2D_original) dlsym(fLoader.handle(), name);
+                fTexImage2D_original = (F_TexImage2D_original) dlsym(ctx ? ctx : RTLD_DEFAULT, name);
                 return (GrGLFuncPtr) &glTexImage2D_hooker;
             }
             else if (strcmp("glBindTexture", name) == 0)
             {
-                fBindTexture_original = (F_BindTexture_original) dlsym(fLoader.handle(), name);
+                fBindTexture_original = (F_BindTexture_original) dlsym(ctx ? ctx : RTLD_DEFAULT, name);
                 return (GrGLFuncPtr) &glBindTextures_hooker;
             }
             else if (strcmp("glDeleteTextures", name) == 0)
             {
-                fDeleteTextures_original = (F_DeleteTextures_original) dlsym(fLoader.handle(), name);
+                fDeleteTextures_original = (F_DeleteTextures_original) dlsym(ctx ? ctx : RTLD_DEFAULT, name);
                 return (GrGLFuncPtr) &glDeleteTextures_hooker;
             }
             else if (strcmp("glGenFramebuffers", name)==0)
             {//
-                fGenFramebuffers_original = (F_GenFramebuffers_original) dlsym(fLoader.handle(), name);
+                fGenFramebuffers_original = (F_GenFramebuffers_original) dlsym(ctx ? ctx : RTLD_DEFAULT, name);
                 return (GrGLFuncPtr) &glGenFramebuffers_hooker;
             }
             else if (strcmp("glBindFramebuffer", name)==0)
             {
-                fBindFramebuffer_original = (F_BindFramebuffer_original) dlsym(fLoader.handle(), name);
+                fBindFramebuffer_original = (F_BindFramebuffer_original) dlsym(ctx ? ctx : RTLD_DEFAULT, name);
                 return (GrGLFuncPtr) &glBindFramebuffer_hooker;
             }
             else if (strcmp("glFramebufferTexture2D", name)==0)
             {
-                fFramebufferTexture2D_original = (F_FramebufferTexture2D_original) dlsym(fLoader.handle(), name);
+                fFramebufferTexture2D_original = (F_FramebufferTexture2D_original) dlsym(ctx ? ctx : RTLD_DEFAULT, name);
                 return (GrGLFuncPtr) &glFramebufferTexture2D_hooker;
             }
             else if (strcmp("glDeleteFramebuffers", name)==0)
             {
-                fDeleteFramebuffers_original = (F_DeleteFramebuffers_original) dlsym(fLoader.handle(), name);
+                fDeleteFramebuffers_original = (F_DeleteFramebuffers_original) dlsym(ctx ? ctx : RTLD_DEFAULT, name);
                 return (GrGLFuncPtr) &glDeleteFramebuffers_hooker;
             }
         }
