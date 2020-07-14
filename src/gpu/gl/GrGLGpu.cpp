@@ -38,7 +38,7 @@
 #include "src/gpu/gl/GrGLTextureRenderTarget.h"
 #include "src/gpu/gl/builders/GrGLShaderStringBuilder.h"
 #include "src/sksl/SkSLCompiler.h"
-
+#include <cstdio>
 #include <cmath>
 
 #define GL_CALL(X) GR_GL_CALL(this->glInterface(), X)
@@ -1573,6 +1573,15 @@ GrGLuint GrGLGpu::createCompressedTexture2D(
     return id;
 }
 
+//when setting to ture, we ignore high levels of texture to reduce memory consumption and speed.
+static bool s_bIsIgnoringHighLevelsOfTexture = true;
+__attribute__((visibility("default"))) extern "C" void  setIgnoringHighLevelsOfTexture(bool bIsIgnoringHighLevelsOfTexture)
+{
+    s_bIsIgnoringHighLevelsOfTexture = bIsIgnoringHighLevelsOfTexture;
+    printf("flutter log—— setIgnoringHighLevelsOfTexture %d", bIsIgnoringHighLevelsOfTexture);
+}
+
+
 GrGLuint GrGLGpu::createTexture2D(SkISize dimensions,
                                   GrGLFormat format,
                                   GrRenderable renderable,
@@ -1606,6 +1615,7 @@ GrGLuint GrGLGpu::createTexture2D(SkISize dimensions,
     bool success = false;
     if (internalFormat) {
         if (this->glCaps().formatSupportsTexStorage(format)) {
+            printf("flutter log—— formatSupportsTexStorage is true");
             auto levelCount = std::max(mipLevelCount, 1);
             GrGLenum error =
                     GL_ALLOC_CALL(TexStorage2D(GR_GL_TEXTURE_2D, levelCount, internalFormat,
@@ -1616,6 +1626,11 @@ GrGLuint GrGLGpu::createTexture2D(SkISize dimensions,
             this->glCaps().getTexImageExternalFormatAndType(format, &externalFormat, &externalType);
             GrGLenum error = GR_GL_NO_ERROR;
             if (externalFormat && externalType) {
+                if (s_bIsIgnoringHighLevelsOfTexture) {
+                    printf("flutter log—— changed mipLevelCount to 1");
+                    mipLevelCount = 1;
+                }
+
                 for (int level = 0; level < mipLevelCount && error == GR_GL_NO_ERROR; level++) {
                     const int twoToTheMipLevel = 1 << level;
                     const int currentWidth = std::max(1, dimensions.width() / twoToTheMipLevel);
