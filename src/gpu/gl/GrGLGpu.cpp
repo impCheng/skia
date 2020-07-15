@@ -989,7 +989,7 @@ bool GrGLGpu::uploadTexData(GrGLFormat textureFormat, GrColorType textureColorTy
     }
 
     GR_GL_CALL(interface, PixelStorei(GR_GL_UNPACK_ALIGNMENT, 1));
-
+    mipLevelCount = 1;
     for (int currentMipLevel = 0; currentMipLevel < mipLevelCount; currentMipLevel++) {
         if (!texels[currentMipLevel].fPixels) {
             if (mipMapsStatus) {
@@ -1296,6 +1296,7 @@ sk_sp<GrTexture> GrGLGpu::onCreateTexture(SkISize dimensions,
         this->glCaps().getTexSubImageDefaultFormatTypeAndColorType(texDesc.fFormat, &externalFormat,
                                                                    &externalType, &colorType);
         if (this->glCaps().clearTextureSupport()) {
+            mipLevelCount = 1;
             for (int i = 0; i < mipLevelCount; ++i) {
                 if (levelClearMask & (1U << i)) {
                     GL_CALL(ClearTexImage(tex->textureID(), i, externalFormat, externalType,
@@ -1308,6 +1309,7 @@ sk_sp<GrTexture> GrGLGpu::onCreateTexture(SkISize dimensions,
             this->disableWindowRectangles();
             this->flushColorWrite(true);
             this->flushClearColor(SK_PMColor4fTRANSPARENT);
+            mipLevelCount = 1;
             for (int i = 0; i < mipLevelCount; ++i) {
                 if (levelClearMask & (1U << i)) {
                     this->bindSurfaceFBOForPixelOps(tex.get(), i, GR_GL_FRAMEBUFFER,
@@ -1320,6 +1322,7 @@ sk_sp<GrTexture> GrGLGpu::onCreateTexture(SkISize dimensions,
         } else {
             std::unique_ptr<char[]> zeros;
             GL_CALL(PixelStorei(GR_GL_UNPACK_ALIGNMENT, 1));
+            mipLevelCount = 1;
             for (int i = 0; i < mipLevelCount; ++i) {
                 if (levelClearMask & (1U << i)) {
                     int levelWidth  = std::max(1, texDesc.fSize.width()  >> i);

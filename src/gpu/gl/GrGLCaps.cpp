@@ -4195,7 +4195,8 @@ bool GrGLCaps::isFormatCopyable(const GrBackendFormat& format) const {
 }
 
 bool GrGLCaps::formatSupportsTexStorage(GrGLFormat format) const {
-    return SkToBool(this->getFormatInfo(format).fFlags & FormatInfo::kUseTexStorage_Flag);
+    return false;
+    //return SkToBool(this->getFormatInfo(format).fFlags & FormatInfo::kUseTexStorage_Flag);
 }
 
 bool GrGLCaps::shouldQueryImplementationReadSupport(GrGLFormat format) const {
